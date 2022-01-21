@@ -1,0 +1,5 @@
+Bundle-Name: product-web
+Bundle-SymbolicName: com.liferay.product.portlet
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.product.portlet.constants
+
