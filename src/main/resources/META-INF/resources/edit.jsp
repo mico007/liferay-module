@@ -11,6 +11,7 @@
 <aui:input name="name"> </aui:input>
 <aui:input name="category"> </aui:input>
 <aui:input name="price"> </aui:input>
+<aui:input name="quantity"> </aui:input>
 
 <aui:button-row>
 <aui:button cssClass="btn btn-primary" type="submit" />

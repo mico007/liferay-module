@@ -64,16 +64,17 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
 //        }
 //    }
 
-    private static void sendPOST(String category, String name, String price) throws IOException {
+    private static void sendPOST(String category, String name, String price, String quantity) throws IOException {
 
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://localhost:8080/ofbizProduct/control/createOfbizProductEvent");
+        HttpPost httpPost = new HttpPost("http://localhost:8080/ofbizProduct/control/createProduct");
         httpPost.addHeader("User-Agent", "Chrome/97.0.4692.71");
 
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.add(new BasicNameValuePair("category", category));
-        urlParameters.add(new BasicNameValuePair("name", name));
-        urlParameters.add(new BasicNameValuePair("price", price));
+        urlParameters.add(new BasicNameValuePair("brandName", category));
+        urlParameters.add(new BasicNameValuePair("productName", name));
+        urlParameters.add(new BasicNameValuePair("priceDetailText", price));
+        urlParameters.add(new BasicNameValuePair("quantityIncluded", quantity));
         urlParameters.add(new BasicNameValuePair("login.username", "admin"));
         urlParameters.add(new BasicNameValuePair("login.password", "ofbiz"));
 
@@ -108,12 +109,13 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
         String name = ParamUtil.get(actionRequest, "name", "");
         String category = ParamUtil.get(actionRequest, "category", "");
         String price = ParamUtil.get(actionRequest, "price", "");
+        String quantity = ParamUtil.get(actionRequest, "quantity", "");
 
-        System.out.println(name + " - " + category + " - " + price );
+        System.out.println(name + " - " + category + " - " + price + " - " + quantity );
 
         System.out.println("SaveActionMvcCommand.doProcessAction() -->");
 
-        sendPOST(category, name, price);
+        sendPOST(category, name, price, quantity);
 
         //postProduct(category, name, price);
 

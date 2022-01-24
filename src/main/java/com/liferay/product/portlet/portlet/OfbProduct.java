@@ -7,11 +7,13 @@ public class OfbProduct {
     private String category;
     private String name;
     private String price;
+    private String quantity;
 
-    public OfbProduct(String category, String name, String price) {
+    public OfbProduct(String category, String name, String price, String quantity) {
         this.category = category;
         this.name = name;
         this.price = price;
+        this.quantity = quantity;
     }
 
     public String getCategory() {
@@ -36,6 +38,14 @@ public class OfbProduct {
 
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
     }
 
     @Override
