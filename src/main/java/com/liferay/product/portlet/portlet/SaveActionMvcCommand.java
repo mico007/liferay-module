@@ -103,6 +103,48 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
 
     }
 
+    private static void createProductPriceReq(String price, String taxPercentage) throws IOException {
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://localhost:8080/ofbizProduct/control/createProductPrice");
+        httpPost.addHeader("User-Agent", "Chrome/97.0.4692.71");
+
+        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new BasicNameValuePair("price", price));
+        urlParameters.add(new BasicNameValuePair("taxPercentage", taxPercentage));
+        urlParameters.add(new BasicNameValuePair("productId", "PROD_MANUF"));
+        urlParameters.add(new BasicNameValuePair("productPriceTypeId", "DEFAULT_PRICE"));
+        urlParameters.add(new BasicNameValuePair("productPricePurposeId", "PURCHASE"));
+        urlParameters.add(new BasicNameValuePair("currencyUomId", "USD"));
+        urlParameters.add(new BasicNameValuePair("productStoreGroupId", "_NA_"));
+        urlParameters.add(new BasicNameValuePair("login.username", "admin"));
+        urlParameters.add(new BasicNameValuePair("login.password", "ofbiz"));
+
+        HttpEntity postParams = new UrlEncodedFormEntity(urlParameters);
+        httpPost.setEntity(postParams);
+
+        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+
+        System.out.println("POST Response Status:: "
+                + httpResponse.getStatusLine().getStatusCode());
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                httpResponse.getEntity().getContent()));
+
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = reader.readLine()) != null) {
+            response.append(inputLine);
+        }
+        reader.close();
+
+        // print result
+        System.out.println(response.toString());
+        httpClient.close();
+
+    }
+
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
@@ -110,6 +152,7 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
         String category = ParamUtil.get(actionRequest, "category", "");
         String price = ParamUtil.get(actionRequest, "price", "");
         String quantity = ParamUtil.get(actionRequest, "quantity", "");
+        String taxPercantage = ParamUtil.get(actionRequest, "taxPercentage", "");
 
         System.out.println(name + " - " + category + " - " + price + " - " + quantity );
 
@@ -117,7 +160,14 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
 
         sendPOST(category, name, price, quantity);
 
-        //postProduct(category, name, price);
+        System.out.println("Product Created!");
+
+//        int bDPrice = Integer.parseInt(price);
+//        int bDTax = Integer.parseInt(taxPercantage);
+
+        createProductPriceReq(price, taxPercantage);
+
+        System.out.println("Product Price Created!");
 
     }
 
