@@ -13,6 +13,7 @@
 <aui:input name="price"> </aui:input>
 <aui:input name="taxPercentage"> </aui:input>
 <aui:input name="quantity"> </aui:input>
+<aui:input name="supplierName"> </aui:input>
 
 <aui:button-row>
 <aui:button cssClass="btn btn-primary" type="submit" />

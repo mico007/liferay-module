@@ -28,6 +28,8 @@ import javax.portlet.ActionResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,6 +147,57 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
 
     }
 
+    private static void createSupplierProductReq(String supplierName, String price) throws IOException {
+
+        final SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        String availableFromDate = String.valueOf(timestamp);
+
+        System.out.print(availableFromDate);
+
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        HttpPost httpPost = new HttpPost("http://localhost:8080/ofbizProduct/control/createSupplierProduct");
+        httpPost.addHeader("User-Agent", "Chrome/97.0.4692.71");
+
+        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new BasicNameValuePair("supplierProductName", supplierName));
+        urlParameters.add(new BasicNameValuePair("lastPrice", price));
+        urlParameters.add(new BasicNameValuePair("availableFromDate", availableFromDate));
+        urlParameters.add(new BasicNameValuePair("productId", "PROD_MANUF"));
+        urlParameters.add(new BasicNameValuePair("currencyUomId", "USD"));
+        urlParameters.add(new BasicNameValuePair("supplierProductId", "MAT_B"));
+        urlParameters.add(new BasicNameValuePair("partyId", "DemoSupplier"));
+        urlParameters.add(new BasicNameValuePair("minimumOrderQuantity", "0"));
+        urlParameters.add(new BasicNameValuePair("login.username", "admin"));
+        urlParameters.add(new BasicNameValuePair("login.password", "ofbiz"));
+
+        HttpEntity postParams = new UrlEncodedFormEntity(urlParameters);
+        httpPost.setEntity(postParams);
+
+        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+
+        System.out.println("POST Response Status:: "
+                + httpResponse.getStatusLine().getStatusCode());
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                httpResponse.getEntity().getContent()));
+
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = reader.readLine()) != null) {
+            response.append(inputLine);
+        }
+        reader.close();
+
+        // print result
+        System.out.println(response.toString());
+        httpClient.close();
+
+    }
+
     @Override
     protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
@@ -153,6 +206,7 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
         String price = ParamUtil.get(actionRequest, "price", "");
         String quantity = ParamUtil.get(actionRequest, "quantity", "");
         String taxPercantage = ParamUtil.get(actionRequest, "taxPercentage", "");
+        String supplierName = ParamUtil.get(actionRequest, "supplierName", "");
 
         System.out.println(name + " - " + category + " - " + price + " - " + quantity );
 
@@ -168,6 +222,10 @@ public class SaveActionMvcCommand extends BaseMVCActionCommand {
         createProductPriceReq(price, taxPercantage);
 
         System.out.println("Product Price Created!");
+
+        createSupplierProductReq(supplierName, price);
+
+        System.out.println("Product Seller Set As Supllier !");
 
     }
 
